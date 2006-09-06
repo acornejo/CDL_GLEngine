@@ -1,29 +1,32 @@
-all: libGLEngine.a
-libGLEngine.a: $(patsubst %.cpp, %.o, $(wildcard GLEngine/*.cpp))
+LIBNAME = libCDL_GLEngine.so
+OBJS =  $(patsubst %.cpp, %.o, $(wildcard CDL/GLEngine/*.cpp))
+$(LIBNAME): $(OBJS)
 
-CPPFLAGS=-I.
-install = install
 prefix = /usr
 incdir = $(prefix)/include
 libdir = $(prefix)/lib
+CPPFLAGS = -I.
+CXXFLAGS = -fPIC -O3
+install = install
 
-%.a: $(patsubst %.cpp, %.o, $(wildcard *.cpp))
-	ar cru $@ $^
+%.dll: $(OBJS)
+	$(CXX) $(CXXFLAGS) -shared -Wl,--out-implib=$@.a -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--whole-archive $? -Wl,--no-whole-archive -o $@
+	
+%.so: $(OBJS)
+	$(CXX) $(CXXFLAGS) -shared 	-Wl,--soname,$@ -Wl,--whole-archive $? -Wl,--no-whole-archive -o $@
 
-install: all
-	$(install) -o root -g root -m 644 libGLEngine.a $(libdir)
-	$(install) -o root -g root -m 644 GLEngine.h $(incdir)
-	if [ ! -d "$(incdir)/GLEngine" ]; then mkdir $(incdir)/GLEngine; fi
-	$(install) -o root -g root -m 644 GLEngine/*.h $(incdir)/GLEngine
+install:
+	$(install) -o root -g root -m 755 $(LIBNAME) $(libdir)
+	$(install) -o root -g root -m 644 CDL/GLEngine.h $(incdir)/CDL
+	if [ ! -d "$(incdir)/CDL/GLEngine" ]; then mkdir $(incdir)/CDL/GLEngine; fi
+	$(install) -o root -g root -m 644 CDL/GLEngine/*.h $(incdir)/CDL/GLEngine
+	$(install) -m 644 CDL_GLEngine.pc $(libdir)/pkgconfig
 
 uninstall:
-	rm -f $(libdir)/libGLEngine.a
-	rm -f $(incdir)/GLEngine.h
-	rm -f $(incdir)/GLEngine/*.h
-	rm -fR $(incdir)/GLEngine
-
-dist:
-	tar -cjvf GLEngine.tar.bz2 $(wildcard GLEngine/*.cpp GLEngine/*.h) GLEngine.h Makefile
+	rm -f $(libdir)/$(LIBNAME)
+	rm -f $(incdir)/CDL/GLEngine.h
+	rm -fR $(incdir)/CDL/GLEngine
+	rm -fR $(libdir)/pkgconfig/CDL_GLEngine.pc
 
 clean:
-	rm -f GLEngine/*.o *.a
+	rm -f CDL/GLEngine/*.o *.so *.dll

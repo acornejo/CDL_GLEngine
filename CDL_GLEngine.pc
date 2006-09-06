@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: CDL_GLEngine
+Description: A tiny OpenGL engine built on top of CDL
+Version: 0.1.0
+Requires: CDL CDL_ImageLib_magick
+Libs: -L${libdir} -lCDL_GLEngine -lGLEW
+Cflags: -I${includedir}
