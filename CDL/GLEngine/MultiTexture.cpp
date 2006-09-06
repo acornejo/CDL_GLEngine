@@ -4,12 +4,12 @@
  *  @author   acornejo
  *  @date
  *   Created:       02:31:58 13/06/2005
- *   Last Update:   01:42:03 18/02/2006
+ *   Last Update:   19:12:33 05/09/2006
  */
 //========================================================================
-#include <GLEngine/MultiTexture.h>
+#include <CDL/GLEngine/MultiTexture.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("MultiTexture");
 

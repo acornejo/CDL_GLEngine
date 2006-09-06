@@ -2,9 +2,9 @@
 #define __SKYBOX_H__
 
 #include <CDL/CDL.h>
-#include "Texture.h"
+#include <CDL/GLEngine/Texture.h>
 
-namespace GLEngine
+namespace CDL
 {
     using CDL::Vec3t;
     using CDL::Intersection;

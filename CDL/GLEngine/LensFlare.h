@@ -1,11 +1,11 @@
 #ifndef __GLE_LENSFLARE_H__
 #define __GLE_LENSFLARE_H__
 
-#include "Texture.h"
-#include "Camera.h"
+#include <CDL/GLEngine/Texture.h>
+#include <CDL/GLEngine/Camera.h>
 #include <vector>
 
-namespace GLEngine
+namespace CDL
 {
     class LensFlare
     {

@@ -1,7 +1,7 @@
-#include "HeightMap.h"
+#include <CDL/GLEngine/HeightMap.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("HeightMap");
 

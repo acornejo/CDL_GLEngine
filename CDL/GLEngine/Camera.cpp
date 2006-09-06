@@ -1,10 +1,10 @@
-#include "Camera.h"
+#include <CDL/GLEngine/Camera.h>
 #include <GL/gl.h>
 
 using CDL::Quaternion;
 using CDL::Vec2t;
 
-namespace GLEngine
+namespace CDL
 {
     Camera::Camera(const Vec3t &eye, const Vec3t &front, const Vec3t &up)
     {

@@ -4,7 +4,7 @@
  *  @author   acornejo
  *  @date
  *   Created:       16:22:37 10/06/2005
- *   Last Update:   01:54:31 12/06/2006
+ *   Last Update:   19:26:50 05/09/2006
  */
 //========================================================================
 
@@ -13,7 +13,7 @@
 
 #include <CDL/CDL.h>
 
-namespace GLEngine
+namespace CDL
 {
     class DisplayList
     {

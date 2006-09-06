@@ -1,7 +1,7 @@
-#include "SkyBox.h"
+#include <CDL/GLEngine/SkyBox.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("SkyBox");
 

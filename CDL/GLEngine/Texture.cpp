@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include <CDL/GLEngine/Texture.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -7,7 +7,7 @@
 #define SPLITX (1<<30)
 #define SPLITY (1<<29)
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("Texture");
 

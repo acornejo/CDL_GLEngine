@@ -4,16 +4,16 @@
  *  @author   alcoco
  *  @date     
  *   Created:       18:05:33 29/03/2005
- *   Last Update:   22:39:51 12/06/2005
+ *   Last Update:   19:31:20 05/09/2006
  */
 //========================================================================
 
-#include "Load3DS.h"
+#include <CDL/GLEngine/Load3DS.h>
 #include <vector>
 #include <string>
 #include <map>
 
-namespace GLEngine
+namespace CDL
 {
     enum
     {
@@ -246,7 +246,7 @@ namespace GLEngine
                         Object &obj=olist.back();
                         int num=readShort(fp);
                         for (int i=0; i<num; i++, readShort(fp))
-                            obj.addTriangle(Triangle(readShort(fp),readShort(fp),readShort(fp)));
+                            obj.addTriangle(MeshTriangle(readShort(fp),readShort(fp),readShort(fp)));
                         processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     }
                     break;

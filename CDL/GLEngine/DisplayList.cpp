@@ -4,13 +4,13 @@
  *  @author   acornejo
  *  @date
  *   Created:       16:24:56 10/06/2005
- *   Last Update:   01:54:47 12/06/2006
+ *   Last Update:   19:26:55 05/09/2006
  */
 //========================================================================
-#include "DisplayList.h"
+#include <CDL/GLEngine/DisplayList.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("DisplayList");
 

@@ -1,10 +1,10 @@
-#include "Font.h"
+#include <CDL/GLEngine/Font.h>
 #include <string.h>
 #include <ctype.h>
 #include <CDL/endian.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("Font");
 

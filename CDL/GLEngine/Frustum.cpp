@@ -1,7 +1,7 @@
-#include "Frustum.h"
+#include <CDL/GLEngine/Frustum.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     typedef enum {RIGHT=0, LEFT, BOTTOM, TOP, BACK, FRONT, MAX} FRSTTypes;
 

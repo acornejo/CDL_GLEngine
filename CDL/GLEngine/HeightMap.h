@@ -2,10 +2,10 @@
 #define __HEIGHTMAP_H__
 
 #include <CDL/CDL.h>
-#include <GLEngine/MultiTexture.h>
-#include <GLEngine/Texture.h>
+#include <CDL/GLEngine/MultiTexture.h>
+#include <CDL/GLEngine/Texture.h>
 
-namespace GLEngine
+namespace CDL
 {
 	using CDL::Vec3t;
 	using CDL::Vec2t;

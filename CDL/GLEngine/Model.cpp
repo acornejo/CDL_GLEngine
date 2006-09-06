@@ -1,7 +1,7 @@
-#include "Model.h"
+#include <CDL/GLEngine/Model.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
     const Color Color::white(1,1,1,1), Color::black(0,0,0,0), Color::red(1,0,0,0), Color::green(0,1,0,0), Color::blue(0,0,1,0);
 
@@ -341,21 +341,21 @@ namespace GLEngine
         return m_scltrack[i];
     }
 
-    Triangle::Triangle(const int &v0, const int &v1, const int &v2)
+    MeshTriangle::MeshTriangle(const int &v0, const int &v1, const int &v2)
     {
         m_vlist[0]=v2;
         m_vlist[1]=v1;
         m_vlist[2]=v0;
     }
 
-    Triangle::Triangle(const Triangle &x)
+    MeshTriangle::MeshTriangle(const MeshTriangle &x)
     {
         m_vlist[0]=x.m_vlist[0];
         m_vlist[1]=x.m_vlist[1];
         m_vlist[2]=x.m_vlist[2];
     }
 
-    const Triangle &Triangle::operator=(const Triangle &x)
+    const MeshTriangle &MeshTriangle::operator=(const MeshTriangle &x)
     {
         if (this != &x)
         {
@@ -367,32 +367,32 @@ namespace GLEngine
         return *this;
     }
 
-    void Triangle::setVertex0(const int &v0)
+    void MeshTriangle::setVertex0(const int &v0)
     {
         m_vlist[0]=v0;
     }
 
-    const int &Triangle::getVertex0() const
+    const int &MeshTriangle::getVertex0() const
     {
         return m_vlist[0];
     }
 
-    void Triangle::setVertex1(const int &v1)
+    void MeshTriangle::setVertex1(const int &v1)
     {
         m_vlist[1]=v1;
     }
 
-    const int &Triangle::getVertex1() const
+    const int &MeshTriangle::getVertex1() const
     {
         return m_vlist[1];
     }
 
-    void Triangle::setVertex2(const int &v2)
+    void MeshTriangle::setVertex2(const int &v2)
     {
         m_vlist[2]=v2;
     }
 
-    const int &Triangle::getVertex2() const
+    const int &MeshTriangle::getVertex2() const
     {
         return m_vlist[2];
     }
@@ -781,12 +781,12 @@ namespace GLEngine
         return m_trilist.size();
     }
 
-    void Object::addTriangle(const Triangle &tri)
+    void Object::addTriangle(const MeshTriangle &tri)
     {
         m_trilist.push_back(tri);
     }
 
-    const Triangle &Object::getTriangle(const int &i) const
+    const MeshTriangle &Object::getTriangle(const int &i) const
     {
         return m_trilist[i];
     }
@@ -822,7 +822,7 @@ namespace GLEngine
         glTranslatef(pivot[0], pivot[1], pivot[2]);
         if (m_list.beginList())
         {
-            std::vector<Triangle>::const_iterator tri_end(m_trilist.end()), tri_ptr(m_trilist.begin());
+            std::vector<MeshTriangle>::const_iterator tri_end(m_trilist.end()), tri_ptr(m_trilist.begin());
             int i=0;
             Mat4t inv=!m_matrix;
 

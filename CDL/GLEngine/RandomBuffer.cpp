@@ -1,6 +1,6 @@
-#include "RandomBuffer.h"
+#include <CDL/GLEngine/RandomBuffer.h>
 
-namespace GLEngine
+namespace CDL
 {
 	DEFCLASS("RandomBuffer");
 

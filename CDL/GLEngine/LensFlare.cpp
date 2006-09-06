@@ -1,7 +1,7 @@
-#include "LensFlare.h"
+#include <CDL/GLEngine/LensFlare.h>
 #include <GL/gl.h>
 
-namespace GLEngine
+namespace CDL
 {
 
     LensFlare::Flare::Flare(const Texture &tex, const float &position, const float &scale, const float &intensity)

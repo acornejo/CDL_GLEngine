@@ -5,11 +5,11 @@
 #if !defined(__WIN32__)
 #include <CDL/ImageLib.h>
 #endif
-#include "Texture.h"
-#include <GLEngine/DisplayList.h>
+#include <CDL/GLEngine/Texture.h>
+#include <CDL/GLEngine/DisplayList.h>
 #include <vector>
 
-namespace GLEngine
+namespace CDL
 {
     using CDL::Mat4t;
     using CDL::Vec3t;
@@ -125,15 +125,15 @@ namespace GLEngine
             const RotTrack &getRotTrack(const int &);
     };
 
-    class Triangle
+    class MeshTriangle
     {
         private:
             int m_vlist[3];
 
         public:
-            Triangle(const int &v0=0, const int &v1=0, const int &v2=0);
-            Triangle(const Triangle &);
-            const Triangle &operator=(const Triangle &);
+            MeshTriangle(const int &v0=0, const int &v1=0, const int &v2=0);
+            MeshTriangle(const MeshTriangle &);
+            const MeshTriangle &operator=(const MeshTriangle &);
             void setVertex0(const int &);
             const int &getVertex0() const;
             void setVertex1(const int &);
@@ -220,7 +220,7 @@ namespace GLEngine
             std::vector<Vec2t>    m_uvlist;
             std::vector<Vec3t>    m_vtxlist;
             std::vector<Vec3t>    m_nrmlist;
-            std::vector<Triangle> m_trilist;
+            std::vector<MeshTriangle> m_trilist;
             std::vector<Object>   m_objlist;
             AABB                  m_bbox;
             Animation             m_anim;
@@ -250,8 +250,8 @@ namespace GLEngine
             Object *findObject(const char *);
             Object &getObject(const int &);
             int getTriangleCount() const;
-            void addTriangle(const Triangle &);
-            const Triangle &getTriangle(const int &) const;
+            void addTriangle(const MeshTriangle &);
+            const MeshTriangle &getTriangle(const int &) const;
             void setMatrix(const Mat4t &);
             const Mat4t &getMatrix() const;
             Animation &getAnimation();

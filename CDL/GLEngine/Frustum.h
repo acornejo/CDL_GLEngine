@@ -3,7 +3,7 @@
 
 #include <CDL/CDL.h>
 
-namespace GLEngine
+namespace CDL
 {
     using CDL::Plane;
     using CDL::Vec3t;

@@ -1,6 +1,6 @@
-#include "Particle.h"
+#include <CDL/GLEngine/Particle.h>
 
-namespace GLEngine
+namespace CDL
 {
     ParticleSystem::Particle::Particle(const Vec3t &p, const Vec3t &v, const float &l, const float &r)
     {

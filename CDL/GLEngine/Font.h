@@ -1,12 +1,12 @@
 #ifndef __GLE_FONT_H__
 #define __GLE_FONT_H__
 
-#include "Texture.h"
-#include "DisplayList.h"
+#include <CDL/GLEngine/Texture.h>
+#include <CDL/GLEngine/DisplayList.h>
 #include <cstdarg>
 #include <stdio.h>
 
-namespace GLEngine
+namespace CDL
 {
     using CDL::InputStream;
 

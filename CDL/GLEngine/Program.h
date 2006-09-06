@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace GLEngine
+namespace CDL
 {
     using CDL::RandomAccessInputStream;
     using CDL::Vec2t;

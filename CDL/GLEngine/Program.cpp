@@ -4,13 +4,13 @@
  *  @author   acornejo
  *  @date
  *   Created:       01:56:26 22/03/2006
- *   Last Update:   04:43:55 22/03/2006
+ *   Last Update:   19:15:49 05/09/2006
  */
 //========================================================================
-#include "Program.h"
+#include <CDL/GLEngine/Program.h>
 #include <GL/glew.h>
 
-namespace GLEngine
+namespace CDL
 {
     DEFCLASS("Program");
 

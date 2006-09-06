@@ -4,17 +4,17 @@
  *  @author   acornejo
  *  @date
  *   Created:       21:24:46 12/06/2005
- *   Last Update:   19:24:27 21/08/2005
+ *   Last Update:   19:12:28 05/09/2006
  */
 //========================================================================
 
 #ifndef __MULTITEXTURE_H__
 #define __MULTITEXTURE_H__
 
-#include <GLEngine/Texture.h>
+#include <CDL/GLEngine/Texture.h>
 #include <vector>
 
-namespace GLEngine
+namespace CDL
 {
     class MultiTexture
     {
