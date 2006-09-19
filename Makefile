@@ -1,4 +1,4 @@
-LIBNAME = libCDL_GLEngine.dll
+LIBNAME = libCDL_GLEngine.so
 OBJS =  $(patsubst %.cpp, %.o, $(wildcard CDL/GLEngine/*.cpp))
 $(LIBNAME): $(OBJS)
 
@@ -21,6 +21,7 @@ install:
 	if [ ! -d "$(incdir)/CDL/GLEngine" ]; then mkdir $(incdir)/CDL/GLEngine; fi
 	$(install) -o root -g root -m 644 CDL/GLEngine/*.h $(incdir)/CDL/GLEngine
 	$(install) -m 644 CDL_GLEngine.pc $(libdir)/pkgconfig
+	$(install) -o root -g root -m 755 $(LIBNAME).a $(libdir)
 
 uninstall:
 	rm -f $(libdir)/$(LIBNAME)
@@ -29,4 +30,4 @@ uninstall:
 	rm -fR $(libdir)/pkgconfig/CDL_GLEngine.pc
 
 clean:
-	rm -f CDL/GLEngine/*.o *.so *.dll
+	rm -f CDL/GLEngine/*.o *.so *.dll *.a
