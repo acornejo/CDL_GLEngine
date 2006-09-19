@@ -2,9 +2,6 @@
 #define __MODEL_H__
 
 #include <CDL/CDL.h>
-#if !defined(__WIN32__)
-#include <CDL/ImageLib.h>
-#endif
 #include <CDL/GLEngine/Texture.h>
 #include <CDL/GLEngine/DisplayList.h>
 #include <vector>
@@ -14,6 +11,7 @@ namespace CDL
     using CDL::Mat4t;
     using CDL::Vec3t;
     using CDL::Vec2t;
+    using CDL::ImageLib;
 
     class AABB
     {

@@ -471,10 +471,8 @@ namespace CDL
             strcpy(m_name,name);
         else
             strcpy(m_name,"");
-#if !defined(__WIN32__)
         if (strlen(m_name) > 0)
-            m_tex=Texture(CDL::ImageLib::load(m_name),Texture::MIPMAP);
-#endif
+            m_tex=Texture(ImageLib::newInstance().load(m_name),Texture::MIPMAP);
     }
 
     const char *TextureMap::getName() const
