@@ -1,4 +1,4 @@
-LIBNAME = libCDL_GLEngine.so
+LIBNAME = libCDL_GLEngine.dll
 OBJS =  $(patsubst %.cpp, %.o, $(wildcard CDL/GLEngine/*.cpp))
 $(LIBNAME): $(OBJS)
 
@@ -6,11 +6,11 @@ prefix = /usr
 incdir = $(prefix)/include
 libdir = $(prefix)/lib
 CPPFLAGS = -I.
-CXXFLAGS = -fPIC -O3
+CXXFLAGS = -O3 -DGLEW_STATIC
 install = install
 
 %.dll: $(OBJS)
-	$(CXX) $(CXXFLAGS) -shared -Wl,--out-implib=$@.a -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--whole-archive $? -Wl,--no-whole-archive -o $@
+	$(CXX) $(CXXFLAGS) -shared -Wl,--out-implib=$@.a -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--whole-archive $? glew.o -Wl,--no-whole-archive -lCDL -lglu32 -lopengl32 -o $@
 	
 %.so: $(OBJS)
 	$(CXX) $(CXXFLAGS) -shared 	-Wl,--soname,$@ -Wl,--whole-archive $? -Wl,--no-whole-archive -o $@

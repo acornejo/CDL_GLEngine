@@ -4,7 +4,7 @@
  *  @author   alcoco
  *  @date
  *   Created:       18:19:23 29/03/2005
- *   Last Update:   19:14:57 05/09/2006
+ *   Last Update:   16:25:33 13/09/2006
  */
 //========================================================================
 
@@ -17,8 +17,8 @@ namespace CDL
 {
     using CDL::File;
 
-    Object load3DS(const char *);
-    Object load3DS(File &fp);
+    MeshObject load3DS(const char *);
+    MeshObject load3DS(File &fp);
 }
 
 #endif//__LOAD3DS_H__

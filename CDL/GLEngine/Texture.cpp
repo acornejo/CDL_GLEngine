@@ -1,5 +1,5 @@
 #include <CDL/GLEngine/Texture.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <GL/glu.h>
 
 #define type GL_UNSIGNED_BYTE

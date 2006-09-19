@@ -353,6 +353,9 @@ namespace CDL
         m_vlist[0]=x.m_vlist[0];
         m_vlist[1]=x.m_vlist[1];
         m_vlist[2]=x.m_vlist[2];
+        m_nlist[0]=x.m_nlist[0];
+        m_nlist[1]=x.m_nlist[1];
+        m_nlist[2]=x.m_nlist[2];
     }
 
     const MeshTriangle &MeshTriangle::operator=(const MeshTriangle &x)
@@ -362,9 +365,17 @@ namespace CDL
             m_vlist[0]=x.m_vlist[0];
             m_vlist[1]=x.m_vlist[1];
             m_vlist[2]=x.m_vlist[2];
+            m_nlist[0]=x.m_nlist[0];
+            m_nlist[1]=x.m_nlist[1];
+            m_nlist[2]=x.m_nlist[2];
         }
 
         return *this;
+    }
+
+    int *MeshTriangle::getVertexPtr()
+    {
+        return m_vlist;
     }
 
     void MeshTriangle::setVertex0(const int &v0)
@@ -395,6 +406,41 @@ namespace CDL
     const int &MeshTriangle::getVertex2() const
     {
         return m_vlist[2];
+    }
+
+    Vec3t *MeshTriangle::getNormalPtr()
+    {
+        return m_nlist;
+    }
+
+    void MeshTriangle::setNormal0(const Vec3t &n0)
+    {
+        m_nlist[0]=n0;
+    }
+
+    const Vec3t &MeshTriangle::getNormal0() const
+    {
+        return m_nlist[0];
+    }
+
+    void MeshTriangle::setNormal1(const Vec3t &n1)
+    {
+        m_nlist[1]=n1;
+    }
+
+    const Vec3t &MeshTriangle::getNormal1() const
+    {
+        return m_nlist[1];
+    }
+
+    void MeshTriangle::setNormal2(const Vec3t &n2)
+    {
+        m_nlist[2]=n2;
+    }
+
+    const Vec3t &MeshTriangle::getNormal2() const
+    {
+        return m_nlist[2];
     }
 
     TextureMap::TextureMap(const char *name)
@@ -636,18 +682,17 @@ namespace CDL
         m_tmap.select();
     }
 
-    Object::Object(const char *name)
+    MeshObject::MeshObject(const char *name)
     {
         setName(name);
         m_matrix.identity();
     }
 
-    Object::Object(const Object &x)
+    MeshObject::MeshObject(const MeshObject &x)
     {
         strcpy(m_name, x.m_name);
         m_uvlist=x.m_uvlist;
         m_vtxlist=x.m_vtxlist;
-        m_nrmlist=x.m_nrmlist;
         m_trilist=x.m_trilist;
         m_objlist=x.m_objlist;
         m_anim=x.m_anim;
@@ -656,14 +701,13 @@ namespace CDL
         m_list=x.m_list;
     }
 
-    const Object &Object::operator=(const Object &x)
+    const MeshObject &MeshObject::operator=(const MeshObject &x)
     {
         if (this != &x)
         {
             strcpy(m_name, x.m_name);
             m_uvlist=x.m_uvlist;
             m_vtxlist=x.m_vtxlist;
-            m_nrmlist=x.m_nrmlist;
             m_trilist=x.m_trilist;
             m_objlist=x.m_objlist;
             m_anim=x.m_anim;
@@ -675,7 +719,7 @@ namespace CDL
         return *this;
     }
 
-    void Object::setName(const char *name)
+    void MeshObject::setName(const char *name)
     {
         if (name)
             strcpy(m_name, name);
@@ -683,82 +727,72 @@ namespace CDL
             strcpy(m_name, "");
     }
 
-    const char *Object::getName() const
+    const char *MeshObject::getName() const
     {
         return m_name;
     }
 
-    const AABB &Object::getBound() const
+    const AABB &MeshObject::getBound() const
     {
         return m_bbox;
     }
 
-    void Object::setBound(const AABB &b)
+    void MeshObject::setBound(const AABB &b)
     {
         m_bbox=b;
     }
 
-    void Object::setMaterial(const Material &mat)
+    void MeshObject::setMaterial(const Material &mat)
     {
         m_mat=mat;
     }
 
-    int Object::getVertexCount() const
+    int MeshObject::getVertexCount() const
     {
         return m_vtxlist.size();
     }
 
-    void Object::addVertex(const Vec3t &vtx)
+    void MeshObject::addVertex(const Vec3t &vtx)
     {
         m_vtxlist.push_back(vtx);
     }
 
-    const Vec3t &Object::getVertex(const int &i) const
+    const Vec3t &MeshObject::getVertex(const int &i) const
     {
         return m_vtxlist[i];
     }
 
-    void Object::addTexCoord(const Vec2t &vtx)
+    void MeshObject::addTexCoord(const Vec2t &vtx)
     {
         m_uvlist.push_back(vtx);
     }
 
-    const Vec2t &Object::getTexCoord(const int &i) const
+    const Vec2t &MeshObject::getTexCoord(const int &i) const
     {
         return m_uvlist[i];
     }
 
-    void Object::addNormal(const Vec3t &nrm)
-    {
-        m_nrmlist.push_back(nrm);
-    }
-
-    const Vec3t &Object::getNormal(const int &i) const
-    {
-        return m_nrmlist[i];
-    }
-
-    int Object::getObjectCount() const
+    int MeshObject::getMeshObjectCount() const
     {
         return m_objlist.size();
     }
 
-    void Object::addObject(const Object &obj)
+    void MeshObject::addMeshObject(const MeshObject &obj)
     {
         m_objlist.push_back(obj);
     }
 
-    const Object &Object::getObject(const int &i) const
+    const MeshObject &MeshObject::getMeshObject(const int &i) const
     {
         return m_objlist[i];
     }
 
-    Object &Object::getObject(const int &i)
+    MeshObject &MeshObject::getMeshObject(const int &i)
     {
         return m_objlist[i];
     }
 
-    Object *Object::findObject(const char *name)
+    MeshObject *MeshObject::findMeshObject(const char *name)
     {
         if (name)
         {
@@ -766,9 +800,9 @@ namespace CDL
                 return this;
             else
             {
-                Object *tmp;
+                MeshObject *tmp;
                 for (int i=0; i<m_objlist.size(); i++)
-                    if ((tmp=m_objlist[i].findObject(name)) != '\0')
+                    if ((tmp=m_objlist[i].findMeshObject(name)) != '\0')
                         return tmp;
             }
         }
@@ -776,39 +810,39 @@ namespace CDL
         return '\0';
     }
 
-    int Object::getTriangleCount() const
+    int MeshObject::getTriangleCount() const
     {
         return m_trilist.size();
     }
 
-    void Object::addTriangle(const MeshTriangle &tri)
+    void MeshObject::addTriangle(const MeshTriangle &tri)
     {
         m_trilist.push_back(tri);
     }
 
-    const MeshTriangle &Object::getTriangle(const int &i) const
+    MeshTriangle &MeshObject::getTriangle(const int &i)
     {
         return m_trilist[i];
     }
 
-    Animation &Object::getAnimation()
+    Animation &MeshObject::getAnimation()
     {
         return m_anim;
     }
 
-    void Object::setMatrix(const Mat4t &matrix)
+    void MeshObject::setMatrix(const Mat4t &matrix)
     {
         m_matrix=matrix;
     }
 
-    const Mat4t &Object::getMatrix() const
+    const Mat4t &MeshObject::getMatrix() const
     {
         return m_matrix;
     }
 
-    void Object::render() const
+    void MeshObject::render() const
     {
-        std::vector<Object>::const_iterator obj_ptr(m_objlist.begin()), obj_end(m_objlist.end());
+        std::vector<MeshObject>::const_iterator obj_ptr(m_objlist.begin()), obj_end(m_objlist.end());
 
         while (obj_ptr != obj_end)
         {
@@ -823,7 +857,6 @@ namespace CDL
         if (m_list.beginList())
         {
             std::vector<MeshTriangle>::const_iterator tri_end(m_trilist.end()), tri_ptr(m_trilist.begin());
-            int i=0;
             Mat4t inv=!m_matrix;
 
             glMultMatrixf((float *)&inv);
@@ -832,10 +865,10 @@ namespace CDL
             while (tri_ptr != tri_end)
             {
                 const int *v=&tri_ptr->getVertex0();
+                const Vec3t *n=&tri_ptr->getNormal0();
                 for (int j=0; j<3; j++)
                 {
-                    if (m_nrmlist.size())
-                        glNormal3fv((float *)&m_nrmlist[i++]);
+                    glNormal3fv((float *)&n[j]);
                     if (m_uvlist.size())
                         glTexCoord2fv((float *)&m_uvlist[v[j]]);
                     if (m_vtxlist.size())
@@ -850,7 +883,7 @@ namespace CDL
         glPopMatrix();
     }
 
-    void Object::calculateBound()
+    void MeshObject::calculateBound()
     {
         for (int i=0; i<m_objlist.size(); i++) m_objlist[i].calculateBound();
 
@@ -889,7 +922,7 @@ namespace CDL
         m_bbox=AABB(min,max);
     }
 
-    void Object::normalize(const AABB &bb)
+    void MeshObject::normalize(const AABB &bb)
     {
         float length=m_anim.getPivot().length();
 

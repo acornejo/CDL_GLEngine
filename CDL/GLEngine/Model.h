@@ -129,17 +129,26 @@ namespace CDL
     {
         private:
             int m_vlist[3];
+            Vec3t m_nlist[3];
 
         public:
             MeshTriangle(const int &v0=0, const int &v1=0, const int &v2=0);
             MeshTriangle(const MeshTriangle &);
             const MeshTriangle &operator=(const MeshTriangle &);
+            int *getVertexPtr();
             void setVertex0(const int &);
             const int &getVertex0() const;
             void setVertex1(const int &);
             const int &getVertex1() const;
             void setVertex2(const int &);
             const int &getVertex2() const;
+            Vec3t *getNormalPtr();
+            void setNormal0(const Vec3t &);
+            const Vec3t &getNormal0() const;
+            void setNormal1(const Vec3t &);
+            const Vec3t &getNormal1() const;
+            void setNormal2(const Vec3t &);
+            const Vec3t &getNormal2() const;
     };
 
     class TextureMap
@@ -213,15 +222,14 @@ namespace CDL
             void select() const;
     };
 
-    class Object
+    class MeshObject
     {
         private:
             char                  m_name[16];
             std::vector<Vec2t>    m_uvlist;
             std::vector<Vec3t>    m_vtxlist;
-            std::vector<Vec3t>    m_nrmlist;
             std::vector<MeshTriangle> m_trilist;
-            std::vector<Object>   m_objlist;
+            std::vector<MeshObject>   m_objlist;
             AABB                  m_bbox;
             Animation             m_anim;
             Material              m_mat;
@@ -229,9 +237,9 @@ namespace CDL
             mutable DisplayList           m_list;
 
         public:
-            Object(const char *n='\0');
-            Object(const Object &);
-            const Object &operator=(const Object &);
+            MeshObject(const char *n='\0');
+            MeshObject(const MeshObject &);
+            const MeshObject &operator=(const MeshObject &);
             void setName(const char *);
             const char *getName() const;
             void setBound(const AABB &);
@@ -242,16 +250,14 @@ namespace CDL
             const Vec3t &getVertex(const int &) const;
             void addTexCoord(const Vec2t &);
             const Vec2t &getTexCoord(const int &) const;
-            void addNormal(const Vec3t &);
-            const Vec3t &getNormal(const int &) const;
-            int getObjectCount() const;
-            void addObject(const Object &);
-            const Object &getObject(const int &) const;
-            Object *findObject(const char *);
-            Object &getObject(const int &);
+            int getMeshObjectCount() const;
+            void addMeshObject(const MeshObject &);
+            const MeshObject &getMeshObject(const int &) const;
+            MeshObject *findMeshObject(const char *);
+            MeshObject &getMeshObject(const int &);
             int getTriangleCount() const;
             void addTriangle(const MeshTriangle &);
-            const MeshTriangle &getTriangle(const int &) const;
+            MeshTriangle &getTriangle(const int &);
             void setMatrix(const Mat4t &);
             const Mat4t &getMatrix() const;
             Animation &getAnimation();

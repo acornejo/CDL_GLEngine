@@ -4,7 +4,7 @@
  *  @author   alcoco
  *  @date     
  *   Created:       18:05:33 29/03/2005
- *   Last Update:   19:31:20 05/09/2006
+ *   Last Update:   18:01:24 13/09/2006
  */
 //========================================================================
 
@@ -19,7 +19,7 @@ namespace CDL
     {
         CHUNK_MAIN         = 0x4D4D,           // Main
         CHUNK_MODEL        = 0x3D3D,           //   3D Model
-        CHUNK_OBJECT       = 0x4000,           //     Object
+        CHUNK_OBJECT       = 0x4000,           //     MeshObject
         CHUNK_TRIMESH      = 0x4100,           //       Mesh
         CHUNK_VERTLIST     = 0x4110,           //         Vertex list
         CHUNK_POLYLIST     = 0x4120,           //         Polygon list
@@ -43,7 +43,7 @@ namespace CDL
         CHUNK_MATMPVO      = 0xA35A,           //         V Offset
         CHUNK_KFDATA       = 0xB000,           //   KeyFrame Data
         CHUNK_KFHDR        = 0xB00A,           //    Header
-        CHUNK_KFOBJECT     = 0xB002,           //     Object Description
+        CHUNK_KFOBJECT     = 0xB002,           //     MeshObject Description
         CHUNK_KFHIERARCHY  = 0xB010,           //       Hierarcy
         CHUNK_KFPIVOT      = 0xB013,           //       Pivot
         CHUNK_KFPOSTR      = 0xB020,           //       Position Key Frames
@@ -52,7 +52,7 @@ namespace CDL
     };
 
 
-    typedef std::vector<Object> olist_t;
+    typedef std::vector<MeshObject> olist_t;
     typedef std::vector<Material> mlist_t;
     typedef std::map<std::string,int> plist_t;
 
@@ -77,13 +77,13 @@ namespace CDL
             void finish() {m_fp.seek(m_pos+chunk.len);}
     };
 
-    void addChildren(Object &node, const int &node_id, olist_t &olist, plist_t &plist)
+    void addChildren(MeshObject &node, const int &node_id, olist_t &olist, plist_t &plist)
     {
         for (int i=0; i<olist.size(); i++)
             if (plist[olist[i].getName()] == node_id)
             {
                 addChildren(olist[i],i,olist,plist);
-                node.addObject(olist[i]);
+                node.addMeshObject(olist[i]);
             }
     }
 
@@ -230,12 +230,12 @@ namespace CDL
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_TRIMESH:
-                    olist.push_back(Object(name));
+                    olist.push_back(MeshObject(name));
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_VERTLIST:
                     {
-                        Object &obj=olist.back();
+                        MeshObject &obj=olist.back();
                         int num=readShort(fp);
                         for (int i=0; i<num; i++)
                             obj.addVertex(readPoint(fp));
@@ -243,7 +243,7 @@ namespace CDL
                     break;
                 case CHUNK_POLYLIST:
                     {
-                        Object &obj=olist.back();
+                        MeshObject &obj=olist.back();
                         int num=readShort(fp);
                         for (int i=0; i<num; i++, readShort(fp))
                             obj.addTriangle(MeshTriangle(readShort(fp),readShort(fp),readShort(fp)));
@@ -252,7 +252,7 @@ namespace CDL
                     break;
                 case CHUNK_UVLIST:
                     {
-                        Object &obj=olist.back();
+                        MeshObject &obj=olist.back();
                         int num=readShort(fp);
                         for (int i=0; i<num; i++)
                             obj.addTexCoord(readUV(fp));
@@ -260,10 +260,11 @@ namespace CDL
                     break;
                 case CHUNK_SMLIST:
                     {
-                        Object &obj=olist.back();
+                        MeshObject &obj=olist.back();
                         int numtri=obj.getTriangleCount(), numvtx=obj.getVertexCount();
                         int tlist[numtri];
                         Vec3t Nt[numtri];
+                        Vec3t normals[numtri*3];
 
                         for (int i=0; i<numtri; i++)
                         {
@@ -272,11 +273,14 @@ namespace CDL
                             Nt[i]=-cross((obj.getVertex(v[0])-obj.getVertex(v[1])),(obj.getVertex(v[2])-obj.getVertex(v[1])));
                             Nt[i].normalize();
                         }
+                        size_t norm_it=0;
                         for (int i=0; i<numtri; i++)
                         {
+                            MeshTriangle &tri=obj.getTriangle(i);
+                            Vec3t *norm_ptr=tri.getNormalPtr();
                             if (tlist[i])
                             {
-                                const int *vi=&obj.getTriangle(i).getVertex0();
+                                const int *vi=&tri.getVertex0();
                                 for (int j=0; j<3; j++)
                                 {
                                     Vec3t N;
@@ -287,14 +291,14 @@ namespace CDL
                                             N+=Nt[k];
                                     }
                                     N.normalize();
-                                    obj.addNormal(N);
+                                    *(norm_ptr++)=N;
                                 }
                             }
                             else
                             {
-                                obj.addNormal(Nt[i]);
-                                obj.addNormal(Nt[i]);
-                                obj.addNormal(Nt[i]);
+                                *(norm_ptr++)=Nt[i];
+                                *(norm_ptr++)=Nt[i];
+                                *(norm_ptr++)=Nt[i];
                             }
                         }
                     }
@@ -428,20 +432,20 @@ namespace CDL
         }
     }
 
-    Object load3DS(const char *fname)
+    MeshObject load3DS(const char *fname)
     {
         File file(fname,File::READ);
-        Object obj=load3DS(file);
+        MeshObject obj=load3DS(file);
         file.close();
         return obj;
     }
 
-    Object load3DS(File &fp)
+    MeshObject load3DS(File &fp)
     {
         olist_t olist;
         plist_t plist;
         mlist_t mlist;
-        Object dummy;
+        MeshObject dummy;
 
         processChunks(fp.size(), fp, olist, mlist, plist);
 
@@ -464,11 +468,13 @@ namespace CDL
         {
             dummy.setName("$$$DUMMY");
             for (int i=0; i<olist.size(); i++)
+            {
                 if (plist[olist[i].getName()] == -1)
                 {
                     addChildren(olist[i],i,olist,plist);
-                    dummy.addObject(olist[i]);
+                    dummy.addMeshObject(olist[i]);
                 }
+            }
         }
 
         return dummy;
