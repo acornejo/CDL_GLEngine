@@ -6,14 +6,14 @@ prefix = /usr
 incdir = $(prefix)/include
 libdir = $(prefix)/lib
 CPPFLAGS = -I.
-CXXFLAGS = -O3 -DGLEW_STATIC
+CXXFLAGS = -O3 -fPIC
 install = install
 
 %.dll: $(OBJS)
 	$(CXX) $(CXXFLAGS) -shared -Wl,--out-implib=$@.a -Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--whole-archive $? glew.o -Wl,--no-whole-archive -lCDL -lglu32 -lopengl32 -o $@
 	
 %.so: $(OBJS)
-	$(CXX) $(CXXFLAGS) -shared 	-Wl,--soname,$@ -Wl,--whole-archive $? -Wl,--no-whole-archive -o $@
+	$(CXX) $(CXXFLAGS) -shared 	-Wl,--soname,$@ -Wl,--whole-archive $(OBJS) -Wl,--no-whole-archive -o $@
 
 install:
 	$(install) -o root -g root -m 755 $(LIBNAME) $(libdir)

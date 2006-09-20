@@ -73,7 +73,5 @@ namespace CDL
             static const size_t &getTextureUnitCount();
             static const size_t &getCurrentTextureUnit();
     };
-
-    static Texture EmptyTexture;
 }
 #endif

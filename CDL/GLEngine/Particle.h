@@ -8,11 +8,12 @@ namespace CDL
 {
     using CDL::Vec3t;
     using CDL::Plane;
+    using CDL::Sphere;
 
     class ParticleSystem
     {
         public:
-            class String;
+            class Spring;
             class Particle // para ser formales falta masa, y radius  quizas "sobre"
             {
                 protected:
@@ -22,7 +23,7 @@ namespace CDL
                     float m_radius;
 
                 public:
-                    Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &l=0, const float &r=0);
+                    Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &r=0);
                     Particle(const Particle &);
                     virtual ~Particle();
                     Particle& operator=(const Particle &);
@@ -40,9 +41,9 @@ namespace CDL
                     virtual void render() const;
 
                     friend class ParticleSystem;
-                    friend class String;
+                    friend class Spring;
             };
-            class String
+            class Spring
             {
                 protected:
                     float m_kd;
@@ -52,34 +53,43 @@ namespace CDL
                     Particle *m_pb;
 
                 public:
-                    String(Particle *pa='\0', Particle *pb='\0');
+                    Spring(Particle *pa='\0', Particle *pb='\0');
+                    Spring(const Spring &);
+                    virtual ~Spring();
+                    Spring& operator=(const Spring &);
                     const float &getStiffness() const;
                     void setStiffness(const float &);
                     const float &getDamping() const;
                     void setDamping(const float &);
                     const float &getLength() const;
                     void setLength(const float &);
-                    void applyForce() const;
+
+                    virtual void  update() const;
+                    virtual void render() const;
             };
             typedef std::vector<Particle *> plist;
-            typedef std::vector<String *>   slist;
+            typedef std::vector<Spring *>   slist;
 
         private:
-            plist particles;
-            slist strings;
-            float viscousity;
-            float elasticity;
+            plist m_particles;
+            slist m_springs;
+            float m_viscousity;
+            float m_elasticity;
 
         public:
             ParticleSystem(const float &v=0, const float &e=0);
             virtual ~ParticleSystem();
             void add(Particle *);
-            void add(String *);
-            void applyStrings();
+            Particle *getParticle(const size_t &) const;
+            size_t getParticleCount() const;
+            void add(Spring *);
+            Spring *getSpring(const size_t &) const;
+            size_t getSpringCount() const;
             void applyDrag();
             void applyForce(const Vec3t &);
             void applyCollision();
             void applyCollision(const Plane &);
+            void applyCollision(const Sphere &);
             void update(const float &);
             void reset();
             virtual void render() const;
