@@ -86,7 +86,7 @@ namespace CDL
          m_pa=pa;
          m_pb=pb;
          m_kd=0;
-         m_ks=100;
+         m_ks=4000;
          m_length=(m_pa->getPosition()-m_pb->getPosition()).length();
     }
 
@@ -153,8 +153,6 @@ namespace CDL
 
               x/=x_length; // normalize
               Vec3t force=x*(m_ks*(x_length-m_length)+m_kd*dot(v,x));
-              m_pa->m_force*=.99;
-              m_pb->m_force*=.99;
               m_pa->m_force-=force;
               m_pb->m_force+=force;
          }
@@ -231,6 +229,7 @@ namespace CDL
 
         while (p != pend)
         {
+            (*p)->m_velocity*=(1-m_viscousity);
             (*p)->m_force-=(*p)->m_velocity*m_viscousity;
             p++;
         }
@@ -260,7 +259,7 @@ namespace CDL
             if (dist < 0)
             {
                 (*p)->m_position-=normal*dist;
-                (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity)*.9f;
+                (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
             }
             p++;
         }
@@ -280,10 +279,10 @@ namespace CDL
             {
                 float length=normal.length(), dist=length-radius-(*p)->m_radius;
                 normal/=length;
+                (*p)->m_position-=normal*dist;
+                (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
 //                (*p)->m_position=point+normal*radius;
 //                (*p)->m_velocity*=.95f;
-                (*p)->m_position-=normal*dist;
-                (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity)*.9f;
             }
             p++;
         }
@@ -305,7 +304,7 @@ namespace CDL
                 {
                     float length=normal.length(), dist=(length-r)*0.5;
                     normal/=length;
-                    Vec3t dV=normal*dot(normal,((*pi)->m_velocity-(*pj)->m_velocity))*m_elasticity;
+                    Vec3t dV=normal*dot(normal,((*pi)->m_velocity-(*pj)->m_velocity))*(1+m_elasticity);
                     (*pi)->m_position-=normal*dist;
                     (*pj)->m_position+=normal*dist;
                     (*pi)->m_velocity-=dV;
