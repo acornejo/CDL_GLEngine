@@ -17,10 +17,10 @@ namespace CDL
             class Particle // para ser formales falta masa, y radius  quizas "sobre"
             {
                 protected:
-                    Vec3t m_position;
-                    Vec3t m_velocity;
-                    Vec3t m_force;
                     float m_radius;
+                    Vec3t m_force;
+                    Vec3t m_velocity;
+                    Vec3t m_position;
 
                 public:
                     Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &r=0);
@@ -49,11 +49,12 @@ namespace CDL
                     float m_kd;
                     float m_ks;
                     float m_length;
+                    Vec3t m_normal;
                     Particle *m_pa;
                     Particle *m_pb;
 
                 public:
-                    Spring(Particle *pa='\0', Particle *pb='\0');
+                    Spring(Particle *pa='\0', Particle *pb='\0', const float &ks=1, const float &kd=0);
                     Spring(const Spring &);
                     virtual ~Spring();
                     Spring& operator=(const Spring &);
@@ -63,8 +64,9 @@ namespace CDL
                     void setDamping(const float &);
                     const float &getLength() const;
                     void setLength(const float &);
+                    const Vec3t &getNormal() const;
 
-                    virtual void  update() const;
+                    virtual void  update();
                     virtual void render() const;
             };
             typedef std::vector<Particle *> plist;
@@ -73,6 +75,7 @@ namespace CDL
         private:
             plist m_particles;
             slist m_springs;
+            bool  m_drag;
             float m_viscousity;
             float m_elasticity;
 
@@ -85,7 +88,8 @@ namespace CDL
             void add(Spring *);
             Spring *getSpring(const size_t &) const;
             size_t getSpringCount() const;
-            void applyDrag();
+            const bool &hasDrag() const;
+            void toggleDrag();
             void applyForce(const Vec3t &);
             void applyCollision();
             void applyCollision(const Plane &);

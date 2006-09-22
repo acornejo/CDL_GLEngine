@@ -81,13 +81,23 @@ namespace CDL
         m_force=Vec3t();
     }
 
-    ParticleSystem::Spring::Spring(Particle *pa, Particle *pb)
+    ParticleSystem::Spring::Spring(Particle *pa, Particle *pb, const float &ks, const float &kd)
     {
          m_pa=pa;
          m_pb=pb;
-         m_kd=0;
-         m_ks=4000;
-         m_length=(m_pa->getPosition()-m_pb->getPosition()).length();
+         m_ks=ks;
+         m_kd=kd;
+         if (pa && pb)
+         {
+             m_normal=m_pa->getPosition()-m_pb->getPosition();
+             m_length=m_normal.length();
+             m_normal/=m_length;
+         }
+         else
+         {
+             m_length=1;
+             m_normal=Vec3t(0,1,0);
+         }
     }
 
     ParticleSystem::Spring::Spring(const Spring &s)
@@ -97,6 +107,7 @@ namespace CDL
         m_kd=s.m_kd;
         m_ks=s.m_ks;
         m_length=s.m_length;
+        m_normal=s.m_normal;
     }
 
     ParticleSystem::Spring::~Spring() {}
@@ -110,6 +121,7 @@ namespace CDL
             m_kd=s.m_kd;
             m_ks=s.m_ks;
             m_length=s.m_length;
+            m_normal=s.m_normal;
         }
         return *this;
     }
@@ -143,16 +155,21 @@ namespace CDL
          m_length=length;
     }
 
-    void ParticleSystem::Spring::update() const
+    const Vec3t &ParticleSystem::Spring::getNormal() const
+    {
+        return m_normal;
+    }
+
+    void ParticleSystem::Spring::update()
     {
          if (m_pa && m_pb)
          {
-              Vec3t x=m_pa->m_position-m_pb->m_position;
+              m_normal=m_pa->m_position-m_pb->m_position;
               Vec3t v=m_pa->m_velocity-m_pb->m_velocity;
-              float x_length=x.length();
+              float n_length=m_normal.length();
 
-              x/=x_length; // normalize
-              Vec3t force=x*(m_ks*(x_length-m_length)+m_kd*dot(v,x));
+              m_normal/=n_length; // normalize
+              Vec3t force=m_normal*(m_ks*(n_length-m_length)+m_kd*dot(v,m_normal));
               m_pa->m_force-=force;
               m_pb->m_force+=force;
          }
@@ -165,6 +182,7 @@ namespace CDL
     {
         m_viscousity=v;
         m_elasticity=e;
+        m_drag=false;
     }
 
     ParticleSystem::~ParticleSystem()
@@ -190,6 +208,16 @@ namespace CDL
         }
 
         m_springs.clear();
+    }
+
+    const bool &ParticleSystem::hasDrag() const
+    {
+        return m_drag;
+    }
+
+    void ParticleSystem::toggleDrag()
+    {
+        m_drag=!m_drag;
     }
 
     void ParticleSystem::add(Particle *p)
@@ -220,19 +248,6 @@ namespace CDL
     size_t ParticleSystem::getSpringCount() const
     {
         return m_springs.size();
-    }
-
-    void ParticleSystem::applyDrag()
-    {
-        plist::iterator p(m_particles.begin());
-        plist::const_iterator pend(m_particles.end());
-
-        while (p != pend)
-        {
-            (*p)->m_velocity*=(1-m_viscousity);
-            (*p)->m_force-=(*p)->m_velocity*m_viscousity;
-            p++;
-        }
     }
 
     void ParticleSystem::applyForce(const Vec3t &accel)
@@ -330,10 +345,23 @@ namespace CDL
         plist::iterator p(m_particles.begin());
         plist::const_iterator pend(m_particles.end());
 
-        while (p != pend)
+        if (m_drag)
         {
-            (*p)->update(dt);
-            p++;
+            while (p != pend)
+            {
+//                (*p)->m_velocity*=(1-m_viscousity);
+                (*p)->m_force-=(*p)->m_velocity*m_viscousity;
+                (*p)->update(dt);
+                p++;
+            }
+        }
+        else
+        {
+            while (p != pend)
+            {
+                (*p)->update(dt);
+                p++;
+            }
         }
     }
 
