@@ -4,7 +4,7 @@
  *  @author   acornejo
  *  @date
  *   Created:       02:31:58 13/06/2005
- *   Last Update:   19:12:33 05/09/2006
+ *   Last Update:   02:27:51 23/09/2006
  */
 //========================================================================
 #include <CDL/GLEngine/MultiTexture.h>

@@ -90,6 +90,8 @@ namespace CDL
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, (int *)&maxsize);
         if (m_tuCount == 0)
             glGetIntegerv(GL_MAX_TEXTURE_UNITS, (int *)&m_tuCount);
+        glewExperimental=true;
+        glewInit();
     }
 
     Texture::Texture(const size_t &unit)
