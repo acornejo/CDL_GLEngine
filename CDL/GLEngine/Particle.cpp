@@ -5,7 +5,6 @@ namespace CDL
     ParticleSystem::Particle::Particle(const Vec3t &p, const Vec3t &v, const float &r)
     {
         m_position=p;
-        m_init_position=p;
         m_velocity=v;
         m_radius=r;
         m_force=Vec3t();
@@ -14,7 +13,6 @@ namespace CDL
     ParticleSystem::Particle::Particle(const Particle &p)
     {
         m_position=p.m_position;
-        m_init_position=p.m_init_position;
         m_velocity=p.m_velocity;
         m_radius=p.m_radius;
         m_force=p.m_force;
@@ -27,7 +25,6 @@ namespace CDL
         if (&p != this)
         {
             m_position=p.m_position;
-            m_init_position=p.m_init_position;
             m_velocity=p.m_velocity;
             m_force=p.m_force;
             m_radius=p.m_radius;
@@ -63,7 +60,6 @@ namespace CDL
     void ParticleSystem::Particle::setPosition(const Vec3t &p)
     {
         m_position=p;
-        m_init_position=m_position;
     }
 
     const Vec3t &ParticleSystem::Particle::getVelocity() const
@@ -297,11 +293,8 @@ namespace CDL
             float dist=pln.dist((*p)->m_position)-(*p)->m_radius;
             if (dist < 0)
             {
-                if (((*p)->m_init_position-normal*dist-pln.getPoint()).norm() < 80)
-                {
                 (*p)->m_position-=normal*dist;
                 (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
-                }
             }
             p++;
         }

@@ -21,7 +21,6 @@ namespace CDL
                     Vec3t m_force;
                     Vec3t m_velocity;
                     Vec3t m_position;
-                    Vec3t m_init_position;
 
                 public:
                     Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &r=0);
@@ -73,7 +72,7 @@ namespace CDL
             typedef std::vector<Particle *> plist;
             typedef std::vector<Spring *>   slist;
 
-        private:
+        protected:
             plist m_particles;
             slist m_springs;
             float m_viscousity;
@@ -99,10 +98,9 @@ namespace CDL
             void applyCollision();
             void applyCollision(const Plane &);
             void applyCollision(const Sphere &);
-            void update(const float &);
-            void reset();
+            virtual void update(const float &);
             virtual void render() const;
-
+            virtual void reset();
     };
 }
 
