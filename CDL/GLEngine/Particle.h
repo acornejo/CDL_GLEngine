@@ -21,6 +21,7 @@ namespace CDL
                     Vec3t m_force;
                     Vec3t m_velocity;
                     Vec3t m_position;
+                    Vec3t m_init_position;
 
                 public:
                     Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &r=0);
@@ -75,12 +76,12 @@ namespace CDL
         private:
             plist m_particles;
             slist m_springs;
-            bool  m_drag;
             float m_viscousity;
             float m_elasticity;
+            float m_damping;
 
         public:
-            ParticleSystem(const float &v=0, const float &e=0);
+            ParticleSystem(const float &v=0, const float &e=0, const float &d=0);
             virtual ~ParticleSystem();
             void add(Particle *);
             Particle *getParticle(const size_t &) const;
@@ -88,8 +89,12 @@ namespace CDL
             void add(Spring *);
             Spring *getSpring(const size_t &) const;
             size_t getSpringCount() const;
-            const bool &hasDrag() const;
-            void toggleDrag();
+            const float &getViscousity() const;
+            void setViscousity(const float &);
+            const float &getElasticity() const;
+            void setElasticity(const float &);
+            const float &getDamping() const;
+            void setDamping(const float &);
             void applyForce(const Vec3t &);
             void applyCollision();
             void applyCollision(const Plane &);

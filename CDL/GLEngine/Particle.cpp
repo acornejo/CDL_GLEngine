@@ -5,6 +5,7 @@ namespace CDL
     ParticleSystem::Particle::Particle(const Vec3t &p, const Vec3t &v, const float &r)
     {
         m_position=p;
+        m_init_position=p;
         m_velocity=v;
         m_radius=r;
         m_force=Vec3t();
@@ -13,6 +14,7 @@ namespace CDL
     ParticleSystem::Particle::Particle(const Particle &p)
     {
         m_position=p.m_position;
+        m_init_position=p.m_init_position;
         m_velocity=p.m_velocity;
         m_radius=p.m_radius;
         m_force=p.m_force;
@@ -25,6 +27,7 @@ namespace CDL
         if (&p != this)
         {
             m_position=p.m_position;
+            m_init_position=p.m_init_position;
             m_velocity=p.m_velocity;
             m_force=p.m_force;
             m_radius=p.m_radius;
@@ -60,6 +63,7 @@ namespace CDL
     void ParticleSystem::Particle::setPosition(const Vec3t &p)
     {
         m_position=p;
+        m_init_position=m_position;
     }
 
     const Vec3t &ParticleSystem::Particle::getVelocity() const
@@ -175,14 +179,13 @@ namespace CDL
          }
     }
 
-    void ParticleSystem::Spring::render() const {
-    }
+    void ParticleSystem::Spring::render() const {}
 
-    ParticleSystem::ParticleSystem(const float &v, const float &e)
+    ParticleSystem::ParticleSystem(const float &v, const float &e, const float &d)
     {
         m_viscousity=v;
         m_elasticity=e;
-        m_drag=false;
+        m_damping=d;
     }
 
     ParticleSystem::~ParticleSystem()
@@ -210,15 +213,6 @@ namespace CDL
         m_springs.clear();
     }
 
-    const bool &ParticleSystem::hasDrag() const
-    {
-        return m_drag;
-    }
-
-    void ParticleSystem::toggleDrag()
-    {
-        m_drag=!m_drag;
-    }
 
     void ParticleSystem::add(Particle *p)
     {
@@ -250,6 +244,36 @@ namespace CDL
         return m_springs.size();
     }
 
+    const float &ParticleSystem::getViscousity() const
+    {
+        return m_viscousity;
+    }
+
+    void ParticleSystem::setViscousity(const float &v)
+    {
+        m_viscousity=v;
+    }
+
+    const float &ParticleSystem::getElasticity() const
+    {
+        return m_elasticity;
+    }
+
+    void ParticleSystem::setElasticity(const float &e)
+    {
+        m_elasticity=e;
+    }
+
+    const float &ParticleSystem::getDamping() const
+    {
+        return m_damping;
+    }
+
+    void ParticleSystem::setDamping(const float &d)
+    {
+        m_damping=d;
+    }
+
     void ParticleSystem::applyForce(const Vec3t &accel)
     {
         plist::iterator p(m_particles.begin());
@@ -273,8 +297,11 @@ namespace CDL
             float dist=pln.dist((*p)->m_position)-(*p)->m_radius;
             if (dist < 0)
             {
+                if (((*p)->m_init_position-normal*dist-pln.getPoint()).norm() < 80)
+                {
                 (*p)->m_position-=normal*dist;
                 (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
+                }
             }
             p++;
         }
@@ -296,8 +323,6 @@ namespace CDL
                 normal/=length;
                 (*p)->m_position-=normal*dist;
                 (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
-//                (*p)->m_position=point+normal*radius;
-//                (*p)->m_velocity*=.95f;
             }
             p++;
         }
@@ -345,12 +370,32 @@ namespace CDL
         plist::iterator p(m_particles.begin());
         plist::const_iterator pend(m_particles.end());
 
-        if (m_drag)
+        if (m_viscousity > 0 && m_damping > 0)
+        {
+            float damp=1-m_damping;
+            while (p != pend)
+            {
+                (*p)->m_velocity*=damp;
+                (*p)->m_force-=(*p)->m_velocity*m_viscousity;
+                (*p)->update(dt);
+                p++;
+            }
+        }
+        else if (m_viscousity > 0)
         {
             while (p != pend)
             {
-//                (*p)->m_velocity*=(1-m_viscousity);
                 (*p)->m_force-=(*p)->m_velocity*m_viscousity;
+                (*p)->update(dt);
+                p++;
+            }
+        }
+        else if (m_damping > 0)
+        {
+            float damp=1-m_damping;
+            while (p != pend)
+            {
+                (*p)->m_velocity*=damp;
                 (*p)->update(dt);
                 p++;
             }

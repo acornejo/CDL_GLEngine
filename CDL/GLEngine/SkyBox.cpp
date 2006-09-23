@@ -94,6 +94,8 @@ namespace CDL
         glTexCoord2f(1.0f, 1.0f);glVertex3fv((float *)&corner[0]);
         glEnd();
         glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
     }
 
     void  SkyBox::setSun(const float &heading, const float &altitude)
