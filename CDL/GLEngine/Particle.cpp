@@ -2,11 +2,11 @@
 
 namespace CDL
 {
-    ParticleSystem::Particle::Particle(const Vec3t &p, const Vec3t &v, const float &r)
+    ParticleSystem::Particle::Particle(const Vec3t &p, const Vec3t &v)
     {
         m_position=p;
         m_velocity=v;
-        m_radius=r;
+        m_locked=false;
         m_force=Vec3t();
     }
 
@@ -14,7 +14,7 @@ namespace CDL
     {
         m_position=p.m_position;
         m_velocity=p.m_velocity;
-        m_radius=p.m_radius;
+        m_locked=p.m_locked;
         m_force=p.m_force;
     }
 
@@ -26,20 +26,10 @@ namespace CDL
         {
             m_position=p.m_position;
             m_velocity=p.m_velocity;
+            m_locked=p.m_locked;
             m_force=p.m_force;
-            m_radius=p.m_radius;
         }
         return *this;
-    }
-
-    const float &ParticleSystem::Particle::getRadius() const
-    {
-        return m_radius;
-    }
-
-    void ParticleSystem::Particle::setRadius(const float &r)
-    {
-        m_radius=r;
     }
 
     const Vec3t &ParticleSystem::Particle::getForce() const
@@ -72,14 +62,18 @@ namespace CDL
         m_velocity=v;
     }
 
+    const bool &ParticleSystem::Particle::getLocked() const
+    {
+        return m_locked;
+    }
+
+    void ParticleSystem::Particle::setLocked(const bool &locked)
+    {
+        m_locked=locked;
+    }
+
     void ParticleSystem::Particle::reset() {}
     void ParticleSystem::Particle::render() const {}
-    void ParticleSystem::Particle::update(const float &dt)
-    {
-        m_velocity+=m_force*dt;     // v=f/m but we have no mass
-        m_position+=m_velocity*dt;  // x=v
-        m_force=Vec3t();
-    }
 
     ParticleSystem::Spring::Spring(Particle *pa, Particle *pb, const float &ks, const float &kd)
     {
@@ -160,7 +154,7 @@ namespace CDL
         return m_normal;
     }
 
-    void ParticleSystem::Spring::update()
+    void ParticleSystem::Spring::applyForce()
     {
          if (m_pa && m_pb)
          {
@@ -177,11 +171,10 @@ namespace CDL
 
     void ParticleSystem::Spring::render() const {}
 
-    ParticleSystem::ParticleSystem(const float &v, const float &e, const float &d)
+    ParticleSystem::ParticleSystem(const float &v, const float &e)
     {
         m_viscousity=v;
         m_elasticity=e;
-        m_damping=d;
     }
 
     ParticleSystem::~ParticleSystem()
@@ -213,6 +206,7 @@ namespace CDL
     void ParticleSystem::add(Particle *p)
     {
         m_particles.push_back(p);
+        m_size+=6;
     }
 
     void ParticleSystem::add(Spring *s)
@@ -260,25 +254,45 @@ namespace CDL
         m_elasticity=e;
     }
 
-    const float &ParticleSystem::getDamping() const
+    const Vec3t &ParticleSystem::getFieldForce() const
     {
-        return m_damping;
+        return m_field_force;
     }
 
-    void ParticleSystem::setDamping(const float &d)
+    void ParticleSystem::setFieldForce(const Vec3t &ff)
     {
-        m_damping=d;
+        m_field_force=ff;
     }
 
-    void ParticleSystem::applyForce(const Vec3t &accel)
+    void ParticleSystem::calculateForces()
     {
         plist::iterator p(m_particles.begin());
         plist::const_iterator pend(m_particles.end());
 
         while (p != pend)
         {
-            (*p)->m_force+=accel; // f=m*a
+            (*p)->m_force=m_field_force;
             p++;
+        }
+
+        slist::iterator s(m_springs.begin());
+        slist::const_iterator send(m_springs.end());
+
+        while (s != send)
+        {
+            (*s)->applyForce();
+            s++;
+        }
+
+
+        p=m_particles.begin();
+        if (m_viscousity > 0)
+        {
+            while (p != pend)
+            {
+                (*p)->m_force-=(*p)->m_velocity*m_viscousity;
+                p++;
+            }
         }
     }
 
@@ -290,7 +304,7 @@ namespace CDL
 
         while (p != pend)
         {
-            float dist=pln.dist((*p)->m_position)-(*p)->m_radius;
+            float dist=pln.dist((*p)->m_position);
             if (dist < 0)
             {
                 (*p)->m_position-=normal*dist;
@@ -310,96 +324,14 @@ namespace CDL
         while (p != pend)
         {
             Vec3t normal=(*p)->m_position-point;
-            if (normal.norm() < radius2+(*p)->m_radius*(*p)->m_radius)
+            if (normal.norm() < radius2)
             {
-                float length=normal.length(), dist=length-radius-(*p)->m_radius;
+                float length=normal.length(), dist=length-radius;
                 normal/=length;
                 (*p)->m_position-=normal*dist;
                 (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
             }
             p++;
-        }
-    }
-
-    void ParticleSystem::applyCollision()
-    {
-        plist::iterator pi(m_particles.begin());
-        plist::const_iterator pend(m_particles.end());
-
-        while (pi != pend)
-        {
-            plist::iterator pj(pi+1);
-            while (pj != pend)
-            {
-                Vec3t normal=(*pi)->m_position-(*pj)->m_position;
-                float r=(*pi)->m_radius+(*pj)->m_radius;
-                if (normal.norm() < r*r)
-                {
-                    float length=normal.length(), dist=(length-r)*0.5;
-                    normal/=length;
-                    Vec3t dV=normal*dot(normal,((*pi)->m_velocity-(*pj)->m_velocity))*(1+m_elasticity);
-                    (*pi)->m_position-=normal*dist;
-                    (*pj)->m_position+=normal*dist;
-                    (*pi)->m_velocity-=dV;
-                    (*pj)->m_velocity+=dV;
-                }
-                pj++;
-            }
-            pi++;
-        }
-    }
-
-    void ParticleSystem::update(const float &dt)
-    {
-        slist::iterator s(m_springs.begin());
-        slist::const_iterator send(m_springs.end());
-
-        while (s != send)
-        {
-            (*s)->update();
-            s++;
-        }
-
-        plist::iterator p(m_particles.begin());
-        plist::const_iterator pend(m_particles.end());
-
-        if (m_viscousity > 0 && m_damping > 0)
-        {
-            float damp=1-m_damping;
-            while (p != pend)
-            {
-                (*p)->m_velocity*=damp;
-                (*p)->m_force-=(*p)->m_velocity*m_viscousity;
-                (*p)->update(dt);
-                p++;
-            }
-        }
-        else if (m_viscousity > 0)
-        {
-            while (p != pend)
-            {
-                (*p)->m_force-=(*p)->m_velocity*m_viscousity;
-                (*p)->update(dt);
-                p++;
-            }
-        }
-        else if (m_damping > 0)
-        {
-            float damp=1-m_damping;
-            while (p != pend)
-            {
-                (*p)->m_velocity*=damp;
-                (*p)->update(dt);
-                p++;
-            }
-        }
-        else
-        {
-            while (p != pend)
-            {
-                (*p)->update(dt);
-                p++;
-            }
         }
     }
 
@@ -433,6 +365,70 @@ namespace CDL
         {
             (*p)->render();
             p++;
+        }
+    }
+
+    void ParticleSystem::toArray(float out[]) const
+    {
+        plist::const_iterator begin(m_particles.begin()), end(m_particles.end());
+        float *v_ptr=out;
+
+        while (begin != end)
+        {
+            const Particle *part=*begin;
+            const float *x=(float *)&part->m_position, *v=(float *)&part->m_velocity;
+            *v_ptr++=*x++;
+            *v_ptr++=*x++;
+            *v_ptr++=*x++;
+            *v_ptr++=*v++;
+            *v_ptr++=*v++;
+            *v_ptr++=*v++;
+            begin++;
+        }
+    }
+
+    void ParticleSystem::fromArray(const float in[])
+    {
+        plist::iterator begin(m_particles.begin());
+        plist::const_iterator end(m_particles.end());
+        const float *v_ptr=in;
+
+        while (begin != end)
+        {
+            Particle *part=*begin;
+            float *x=(float *)&part->m_position, *v=(float *)&part->m_velocity;
+            if (!part->m_locked)
+            {
+                *x++=*v_ptr++;
+                *x++=*v_ptr++;
+                *x++=*v_ptr++;
+                *v++=*v_ptr++;
+                *v++=*v_ptr++;
+                *v++=*v_ptr++;
+            }
+            else
+                v_ptr+=6;
+            begin++;
+        }
+    }
+
+    void ParticleSystem::dydt(float out[])
+    {
+        calculateForces();
+        plist::const_iterator begin(m_particles.begin()), end(m_particles.end());
+        float *v_ptr=out;
+
+        while (begin != end)
+        {
+            const Particle *part=*begin;
+            const float *v=(float *)&part->m_velocity, *f=(float *)&part->m_force;
+            *v_ptr++=*v++;
+            *v_ptr++=*v++;
+            *v_ptr++=*v++;
+            *v_ptr++=*f++;
+            *v_ptr++=*f++;
+            *v_ptr++=*f++;
+            begin++;
         }
     }
 }

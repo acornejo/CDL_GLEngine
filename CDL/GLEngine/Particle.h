@@ -9,21 +9,22 @@ namespace CDL
     using CDL::Vec3t;
     using CDL::Plane;
     using CDL::Sphere;
+    using CDL::ODESolver;
 
-    class ParticleSystem
+    class ParticleSystem: public ODESolver
     {
         public:
             class Spring;
-            class Particle // para ser formales falta masa, y radius  quizas "sobre"
+            class Particle // para ser formales falta masa, aqui asumo masa=1
             {
                 protected:
-                    float m_radius;
-                    Vec3t m_force;
-                    Vec3t m_velocity;
                     Vec3t m_position;
+                    Vec3t m_velocity;
+                    Vec3t m_force;
+                    bool  m_locked;
 
                 public:
-                    Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t(), const float &r=0);
+                    Particle(const Vec3t &p=Vec3t(), const Vec3t &v=Vec3t());
                     Particle(const Particle &);
                     virtual ~Particle();
                     Particle& operator=(const Particle &);
@@ -33,11 +34,10 @@ namespace CDL
                     void setPosition(const Vec3t &);
                     const Vec3t &getVelocity() const;
                     void setVelocity(const Vec3t &);
-                    const float &getRadius() const;
-                    void setRadius(const float &);
+                    const bool &getLocked() const;
+                    void setLocked(const bool &);
 
                     virtual void reset();
-                    virtual void update(const float &);
                     virtual void render() const;
 
                     friend class ParticleSystem;
@@ -66,7 +66,7 @@ namespace CDL
                     void setLength(const float &);
                     const Vec3t &getNormal() const;
 
-                    virtual void  update();
+                    virtual void  applyForce();
                     virtual void render() const;
             };
             typedef std::vector<Particle *> plist;
@@ -77,10 +77,14 @@ namespace CDL
             slist m_springs;
             float m_viscousity;
             float m_elasticity;
-            float m_damping;
+            Vec3t m_field_force;
+
+            void toArray(float []) const;
+            void fromArray(const float []);
+            void dydt(float []);
 
         public:
-            ParticleSystem(const float &v=0, const float &e=0, const float &d=0);
+            ParticleSystem(const float &v=0, const float &e=0);
             virtual ~ParticleSystem();
             void add(Particle *);
             Particle *getParticle(const size_t &) const;
@@ -92,13 +96,11 @@ namespace CDL
             void setViscousity(const float &);
             const float &getElasticity() const;
             void setElasticity(const float &);
-            const float &getDamping() const;
-            void setDamping(const float &);
-            void applyForce(const Vec3t &);
-            void applyCollision();
+            const Vec3t &getFieldForce() const;
+            void setFieldForce(const Vec3t &);
+            void calculateForces();
             void applyCollision(const Plane &);
             void applyCollision(const Sphere &);
-            virtual void update(const float &);
             virtual void render() const;
             virtual void reset();
     };
