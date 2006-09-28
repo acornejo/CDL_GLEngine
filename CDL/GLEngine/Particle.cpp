@@ -72,7 +72,6 @@ namespace CDL
         m_locked=locked;
     }
 
-    void ParticleSystem::Particle::reset() {}
     void ParticleSystem::Particle::render() const {}
 
     ParticleSystem::Spring::Spring(Particle *pa, Particle *pb, const float &ks, const float &kd)
@@ -331,18 +330,6 @@ namespace CDL
                 (*p)->m_position-=normal*dist;
                 (*p)->m_velocity-=normal*dot(normal,(*p)->m_velocity)*(1+m_elasticity);
             }
-            p++;
-        }
-    }
-
-    void ParticleSystem::reset()
-    {
-        plist::iterator p(m_particles.begin());
-        plist::const_iterator pend(m_particles.end());
-
-        while (p != pend)
-        {
-            (*p)->reset();
             p++;
         }
     }

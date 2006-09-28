@@ -37,7 +37,6 @@ namespace CDL
                     const bool &getLocked() const;
                     void setLocked(const bool &);
 
-                    virtual void reset();
                     virtual void render() const;
 
                     friend class ParticleSystem;
@@ -102,7 +101,6 @@ namespace CDL
             void applyCollision(const Plane &);
             void applyCollision(const Sphere &);
             virtual void render() const;
-            virtual void reset();
     };
 }
 
