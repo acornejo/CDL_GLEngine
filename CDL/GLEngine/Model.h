@@ -4,6 +4,7 @@
 #include <CDL/CDL.h>
 #include <CDL/GLEngine/Texture.h>
 #include <CDL/GLEngine/DisplayList.h>
+#include <CDL/GLEngine/RenderableObject.h>
 #include <vector>
 
 namespace CDL
@@ -220,7 +221,7 @@ namespace CDL
             void select() const;
     };
 
-    class MeshObject
+    class MeshObject: public RenderableObject
     {
         private:
             char                  m_name[16];
