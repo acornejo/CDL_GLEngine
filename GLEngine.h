@@ -1,3 +1,4 @@
+#include <GLEngine/RenderableObject.h>
 #include <GLEngine/Camera.h>
 #include <GLEngine/Texture.h>
 #include <GLEngine/MultiTexture.h>

@@ -3,6 +3,7 @@
 
 #include <CDL/CDL.h>
 #include <vector>
+#include <CDL/GLEngine/RenderableObject.h>
 
 namespace CDL
 {
@@ -11,11 +12,12 @@ namespace CDL
     using CDL::Sphere;
     using CDL::ODESolver;
 
-    class ParticleSystem: public ODESolver
+    class ParticleSystem: public ODESolver, public RenderableObject
     {
         public:
             class Spring;
-            class Particle // para ser formales falta masa, aqui asumo masa=1
+            // To be formal we need mass, here mass=1
+            class Particle: public RenderableObject
             {
                 protected:
                     Vec3t m_position;
@@ -42,7 +44,7 @@ namespace CDL
                     friend class ParticleSystem;
                     friend class Spring;
             };
-            class Spring
+            class Spring: public RenderableObject
             {
                 protected:
                     float m_kd;

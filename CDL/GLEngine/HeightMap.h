@@ -4,13 +4,14 @@
 #include <CDL/CDL.h>
 #include <CDL/GLEngine/MultiTexture.h>
 #include <CDL/GLEngine/Texture.h>
+#include <CDL/GLEngine/RenderableObject.h>
 
 namespace CDL
 {
 	using CDL::Vec3t;
 	using CDL::Vec2t;
 
-	class HeightMap
+	class HeightMap: public RenderableObject
 	{
 		public:
 			typedef unsigned short ushort;

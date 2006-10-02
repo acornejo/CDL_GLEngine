@@ -3,6 +3,7 @@
 
 #include <CDL/CDL.h>
 #include <CDL/GLEngine/Texture.h>
+#include <CDL/GLEngine/RenderableObject.h>
 
 namespace CDL
 {
@@ -11,7 +12,7 @@ namespace CDL
     using CDL::Ray;
     using CDL::Plane;
 
-    class SkyBox
+    class SkyBox: public RenderableObject
     {
         public:
             typedef enum {UP=0, DOWN, FRONT, BACK, LEFT, RIGHT} SkyBox_Side;

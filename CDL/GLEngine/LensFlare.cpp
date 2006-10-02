@@ -10,6 +10,7 @@ namespace CDL
         m_position=position;
         m_scale=scale;
         m_intensity=intensity;
+        m_corner='\0';
     }
 
     LensFlare::Flare::Flare(const LensFlare::Flare &f)
@@ -19,6 +20,7 @@ namespace CDL
         m_scale=f.m_scale;
         m_intensity=f.m_intensity;
         m_pos=f.m_pos;
+        m_corner=f.m_corner;
     }
 
     LensFlare::Flare::~Flare()
@@ -33,6 +35,7 @@ namespace CDL
             m_scale=f.m_scale;
             m_intensity=f.m_intensity;
             m_pos=f.m_pos;
+            m_corner=f.m_corner;
         }
         return *this;
     }
@@ -78,27 +81,30 @@ namespace CDL
     }
 
 
-    void LensFlare::Flare::update(const Vec3t &center, const Vec3t &axis)
+    void LensFlare::Flare::update(const Vec3t &center, const Vec3t &axis, const Vec3t *corner)
     {
         m_pos=center+axis*m_position;
+        m_corner=corner;
     }
 
-    void LensFlare::Flare::render(const Vec3t corner[4]) const
+    void LensFlare::Flare::render() const
     {
-        m_tex.select();
-
-        Vec3t v0=m_pos+corner[0]*m_scale, v1=m_pos+corner[1]*m_scale, v2=m_pos+corner[2]*m_scale, v3=m_pos+corner[3]*m_scale;
-        glBegin(GL_QUADS);
-        glColor3f(m_intensity, m_intensity, m_intensity);
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3fv((float *)&v0);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3fv((float *)&v1);
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex3fv((float *)&v2);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex3fv((float *)&v3);
-        glEnd();
+        if (m_corner != '\0')
+        {
+            m_tex.select();
+            Vec3t v0=m_pos+m_corner[0]*m_scale, v1=m_pos+m_corner[1]*m_scale, v2=m_pos+m_corner[2]*m_scale, v3=m_pos+m_corner[3]*m_scale;
+            glBegin(GL_QUADS);
+            glColor3f(m_intensity, m_intensity, m_intensity);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex3fv((float *)&v0);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex3fv((float *)&v1);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex3fv((float *)&v2);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex3fv((float *)&v3);
+            glEnd();
+        }
     }
 
     LensFlare::LensFlare(const float &scale, const Vec3t &source)
@@ -181,7 +187,7 @@ namespace CDL
 
         while (flare != fend)
         {
-            flare->update(center, axis);
+            flare->update(center, axis, m_corner);
             flare++;
         }
     }
@@ -199,7 +205,7 @@ namespace CDL
 
         while (flare != fend)
         {
-            flare->render(m_corner);
+            flare->render();
             flare++;
         }
 

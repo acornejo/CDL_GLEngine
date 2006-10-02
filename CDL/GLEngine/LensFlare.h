@@ -3,20 +3,22 @@
 
 #include <CDL/GLEngine/Texture.h>
 #include <CDL/GLEngine/Camera.h>
+#include <CDL/GLEngine/RenderableObject.h>
 #include <vector>
 
 namespace CDL
 {
-    class LensFlare
+    class LensFlare: public RenderableObject
     {
         public:
-            class Flare
+            class Flare: public RenderableObject
             {
                 private:
                     float m_position;
                     float m_scale;
                     float m_intensity;
                     Vec3t m_pos;
+                    const Vec3t *m_corner;
                     Texture m_tex;
 
                 public:
@@ -32,8 +34,8 @@ namespace CDL
                     void setIntensity(const float &);
                     const Texture &getTexture() const;
                     void setTexture(const Texture &);
-                    void update(const Vec3t&, const Vec3t&);
-                    void render(const Vec3t *) const;
+                    void update(const Vec3t&, const Vec3t&, const Vec3t *);
+                    void render() const;
             };
             typedef std::vector<Flare> flist;
 
