@@ -4,7 +4,7 @@
  *  @author   alcoco
  *  @date     
  *   Created:       18:05:33 29/03/2005
- *   Last Update:   18:01:24 13/09/2006
+ *   Last Update:   22:40:31 15/10/2006
  */
 //========================================================================
 
@@ -452,9 +452,14 @@ namespace CDL
         int num=0;
         for (int i=0; i<olist.size(); i++) if (plist[olist[i].getName()] == -1) num++;
 
-        if (num == 0) printf("ERROR, no objects\n");
-
-        if (num < 2)
+        if (num == 0)
+        {
+            printf("ERROR, no objects\n");
+            dummy.setName("$$$DUMMY");
+            for (int i=0; i<olist.size(); i++)
+                dummy.addMeshObject(olist[i]);
+        }
+        else if (num == 1)
         {
             for (int i=0; i<olist.size(); i++)
                 if (plist[olist[i].getName()] == -1)

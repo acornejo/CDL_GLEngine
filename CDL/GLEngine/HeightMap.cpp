@@ -13,7 +13,7 @@ namespace CDL
         vIndex='\0';
     }
 
-    HeightMap::HeightMap(const Image &img, const Vec3t &size, const int &step, const int &detail)
+    HeightMap::HeightMap(const Image &img, const Vec3t &size, const int &step)
     {
         m_ref=new size_t(1);
         if (img.getType() == Image::NONE || !size[0] || !size[2])
@@ -26,7 +26,6 @@ namespace CDL
         else
         {
             m_scale=size;
-            m_detail=detail;
             m_width=img.getWidth()/step;
             m_height=img.getHeight()/step;
 
@@ -85,7 +84,6 @@ namespace CDL
         tData=h.tData;
         m_tex=h.m_tex;
         m_scale=h.m_scale;
-        m_detail=h.m_detail;
         m_width=h.m_width;
         m_height=h.m_height;
     }
@@ -119,24 +117,20 @@ namespace CDL
             tData=h.tData;
             m_tex=h.m_tex;
             m_scale=h.m_scale;
-            m_detail=h.m_detail;
             m_width=h.m_width;
             m_height=h.m_height;
         }
         return *this;
     }
 
-    void HeightMap::setTextures(const Image &tex, const Image &det)
+    void HeightMap::setTexture(const MultiTexture &tex)
     {
-        Texture t1(tex,Texture::MIPMAP|Texture::CLAMP);
-        m_tex.addTexture(t1);
-        if (det.getType() != Image::NONE)
-        {
-            Texture t2(det,Texture::MIPMAP|Texture::DETAIL);
-            t2.setUScale(m_detail);
-            t2.setVScale(m_detail);
-            m_tex.addTexture(t2);
-        }
+        m_tex=tex;
+    }
+
+    const MultiTexture &HeightMap::getTexture() const
+    {
+        return m_tex;
     }
 
     float HeightMap::getHeight(const float &s, const float &t) const

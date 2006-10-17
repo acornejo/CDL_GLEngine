@@ -19,7 +19,6 @@ namespace CDL
 		private:
 			size_t *m_ref;
 			Vec3t   m_scale;
-            float   m_detail;
             size_t  m_width;
             size_t  m_height;
             MultiTexture m_tex;
@@ -29,11 +28,12 @@ namespace CDL
 
 		public:
 			HeightMap();
-			HeightMap(const Image &, const Vec3t &, const int &s=1, const int &d=1);
+			HeightMap(const Image &, const Vec3t &, const int &s=1);
 			HeightMap(const HeightMap &);
 			virtual ~HeightMap();
 			const HeightMap &operator=(const HeightMap &);
-			void setTextures(const Image &, const Image &i=Image());
+			void setTexture(const MultiTexture &);
+            const MultiTexture &getTexture() const;
 			float getHeight(const float &x, const float &y) const;
 			void render() const;
 			const Vec3t &getScale() const;
