@@ -84,7 +84,7 @@ namespace CDL
         }
     }
 
-    void init(const size_t &maxsize, const size_t &m_tuCount)
+    void init(size_t &maxsize, size_t &m_tuCount)
     {
          if (maxsize == 0)
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, (int *)&maxsize);

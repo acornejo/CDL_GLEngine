@@ -443,14 +443,14 @@ namespace CDL
         return m_nlist[2];
     }
 
-    TextureMap::TextureMap(const char *name)
+    TextureMap::TextureMap(const string &name)
     {
         setName(name);
     }
 
     TextureMap::TextureMap(const TextureMap &x)
     {
-        strcpy(m_name, x.m_name);
+        m_name=x.m_name;
         m_tex=x.m_tex;
     }
 
@@ -458,24 +458,21 @@ namespace CDL
     {
         if (this != &x)
         {
-            strcpy(m_name, x.m_name);
+            m_name=x.m_name;
             m_tex=x.m_tex;
         }
 
         return *this;
     }
 
-    void TextureMap::setName(const char *name)
+    void TextureMap::setName(const string &name)
     {
-        if (name)
-            strcpy(m_name,name);
-        else
-            strcpy(m_name,"");
-        if (strlen(m_name) > 0)
+        m_name=name;
+        if (name.length() > 0)
             m_tex=Texture(ImageLib::newInstance().load(m_name),Texture::MIPMAP);
     }
 
-    const char *TextureMap::getName() const
+    const string &TextureMap::getName() const
     {
         return m_name;
     }
@@ -567,7 +564,7 @@ namespace CDL
         return c;
     }
 
-    Material::Material(const char *name)
+    Material::Material(const string &name)
     {
         setName(name);
         m_ambt=Color(0.5,0.5,0.5);
@@ -579,7 +576,7 @@ namespace CDL
 
     Material::Material(const Material &x)
     {
-        strcpy(m_name, x.m_name);
+        m_name=x.m_name;
         m_ambt=x.m_ambt;
         m_diff=x.m_diff;
         m_spec=x.m_spec;
@@ -592,7 +589,7 @@ namespace CDL
     {
         if (&x != this)
         {
-            strcpy(m_name, x.m_name);
+            m_name=x.m_name;
             m_ambt=x.m_ambt;
             m_diff=x.m_diff;
             m_spec=x.m_spec;
@@ -603,15 +600,12 @@ namespace CDL
         return *this;
     }
 
-    void Material::setName(const char *name)
+    void Material::setName(const string &name)
     {
-        if (name)
-            strcpy(m_name,name);
-        else
-            strcpy(m_name,"");
+        m_name=name;
     }
 
-    const char *Material::getName() const
+    const string &Material::getName() const
     {
         return m_name;
     }
@@ -680,7 +674,7 @@ namespace CDL
         m_tmap.select();
     }
 
-    MeshObject::MeshObject(const char *name)
+    MeshObject::MeshObject(const string &name)
     {
         setName(name);
         m_matrix.identity();
@@ -688,7 +682,7 @@ namespace CDL
 
     MeshObject::MeshObject(const MeshObject &x)
     {
-        strcpy(m_name, x.m_name);
+        m_name=x.m_name;
         m_uvlist=x.m_uvlist;
         m_vtxlist=x.m_vtxlist;
         m_trilist=x.m_trilist;
@@ -703,7 +697,7 @@ namespace CDL
     {
         if (this != &x)
         {
-            strcpy(m_name, x.m_name);
+            m_name=x.m_name;
             m_uvlist=x.m_uvlist;
             m_vtxlist=x.m_vtxlist;
             m_trilist=x.m_trilist;
@@ -717,15 +711,12 @@ namespace CDL
         return *this;
     }
 
-    void MeshObject::setName(const char *name)
+    void MeshObject::setName(const string &name)
     {
-        if (name)
-            strcpy(m_name, name);
-        else
-            strcpy(m_name, "");
+        m_name=name;
     }
 
-    const char *MeshObject::getName() const
+    const string &MeshObject::getName() const
     {
         return m_name;
     }
@@ -790,11 +781,11 @@ namespace CDL
         return m_objlist[i];
     }
 
-    MeshObject *MeshObject::findMeshObject(const char *name)
+    MeshObject *MeshObject::findMeshObject(const string &name)
     {
-        if (name)
+        if (name.length() > 0)
         {
-            if (!strcmp(name,m_name))
+            if (name == m_name)
                 return this;
             else
             {

@@ -153,15 +153,15 @@ namespace CDL
     class TextureMap
     {
         private:
-            char  m_name[16];
+            string  m_name;
             Texture m_tex;
 
         public:
-            TextureMap(const char *n='\0');
+            TextureMap(const string &name=string::empty);
             TextureMap(const TextureMap &);
             const TextureMap &operator=(const TextureMap &);
-            void setName(const char *);
-            const char *getName() const;
+            void setName(const string &);
+            const string &getName() const;
             Texture &getTex() {return m_tex;}
             void select() const;
     };
@@ -193,7 +193,7 @@ namespace CDL
     class Material
     {
         private:
-            char m_name[16];
+            string m_name;
             TextureMap m_tmap;
             Color m_ambt;
             Color m_diff;
@@ -202,11 +202,11 @@ namespace CDL
             float m_opac;
 
         public:
-            Material(const char *name='\0');
+            Material(const string &name=string::empty);
             Material(const Material &);
             const Material &operator=(const Material &);
-            void setName(const char *);
-            const char *getName() const;
+            void setName(const string &);
+            const string &getName() const;
             void setAmbient(const Color &);
             const Color &getAmbient() const;
             void setDiffuse(const Color &);
@@ -224,7 +224,7 @@ namespace CDL
     class MeshObject: public RenderableObject
     {
         private:
-            char                  m_name[16];
+            string                m_name;
             std::vector<Vec2t>    m_uvlist;
             std::vector<Vec3t>    m_vtxlist;
             std::vector<MeshTriangle> m_trilist;
@@ -236,11 +236,11 @@ namespace CDL
             mutable DisplayList           m_list;
 
         public:
-            MeshObject(const char *n='\0');
+            MeshObject(const string &name=string::empty);
             MeshObject(const MeshObject &);
             const MeshObject &operator=(const MeshObject &);
-            void setName(const char *);
-            const char *getName() const;
+            void setName(const string &);
+            const string &getName() const;
             void setBound(const AABB &);
             const AABB &getBound() const;
             void setMaterial(const Material &);
@@ -252,7 +252,7 @@ namespace CDL
             int getMeshObjectCount() const;
             void addMeshObject(const MeshObject &);
             const MeshObject &getMeshObject(const int &) const;
-            MeshObject *findMeshObject(const char *);
+            MeshObject *findMeshObject(const string &);
             MeshObject &getMeshObject(const int &);
             int getTriangleCount() const;
             void addTriangle(const MeshTriangle &);

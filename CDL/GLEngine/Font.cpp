@@ -108,7 +108,7 @@ namespace CDL
         if (is_bitmap)
         {
             size_t stride=(width+7)>>3;
-            unsigned char bitmap[stride*height];
+            byte bitmap[stride*height];
             in.read(bitmap, stride*height);
             for (int i=0; i<height; i++)
                 for (int j=0; j<width; j++)
@@ -213,20 +213,14 @@ namespace CDL
         return *this;
     }
 
-    void Font::print(const size_t &scale, const int &x, const int &y, const char *str, ...)
+    void Font::print(const size_t &scale, const int &x, const int &y, const string &str)
     {
-        char strText[256];
         int view[4];
-        size_t strLength;
         va_list ap;
         float rx, ry;
 
         if (str == '\0') return;
 
-        va_start(ap, str);
-        vsprintf(strText,str,ap);
-        va_end(ap);
-        strLength=strlen(strText);
         glGetIntegerv(GL_VIEWPORT, view);
 
         if (x < 0)
@@ -234,13 +228,13 @@ namespace CDL
             switch (x)
             {
                 case CENTER:
-                    rx=(view[2]-strLength*scale*0.65)/2;
+                    rx=(view[2]-str.length()*scale*0.65)/2;
                     break;
                 case LEFT:
                     rx=0;
                     break;
                 case RIGHT:
-                    rx=(view[2]-(strLength+1)*scale*0.65);
+                    rx=(view[2]-(str.length()+1)*scale*0.65);
                     break;
                 default:
                     Error_send("Invalid parameter for X coordinate\n");
@@ -285,7 +279,7 @@ namespace CDL
         glTranslatef(rx,ry,0);
         glScalef(scale,scale,1);
 
-        m_list.call(strText);
+        m_list.call(str);
 
         glPopMatrix();
         glMatrixMode(GL_PROJECTION);

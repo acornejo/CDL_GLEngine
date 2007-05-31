@@ -3,7 +3,6 @@
 
 #include <CDL/GLEngine/Texture.h>
 #include <CDL/GLEngine/DisplayList.h>
-#include <cstdarg>
 #include <stdio.h>
 
 namespace CDL
@@ -25,7 +24,7 @@ namespace CDL
             Font(InputStream &);
             Font(const Font &);
             Font& operator=(const Font &);
-            void print(const size_t &s, const int &x, const int &y, const char *str, ...);
+            void print(const size_t &s, const int &x, const int &y, const string &str);
             const size_t &getSize() const;
     };
 }

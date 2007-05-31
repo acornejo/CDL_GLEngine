@@ -4,13 +4,12 @@
  *  @author   alcoco
  *  @date     
  *   Created:       18:05:33 29/03/2005
- *   Last Update:   22:40:31 15/10/2006
+ *   Last Update:   22:00:53 30/05/2007
  */
 //========================================================================
 
 #include <CDL/GLEngine/Load3DS.h>
 #include <vector>
-#include <string>
 #include <map>
 
 namespace CDL
@@ -54,7 +53,7 @@ namespace CDL
 
     typedef std::vector<MeshObject> olist_t;
     typedef std::vector<Material> mlist_t;
-    typedef std::map<std::string,int> plist_t;
+    typedef std::map<string,int> plist_t;
 
     class Chunk
     {
@@ -209,7 +208,7 @@ namespace CDL
 
     void processChunks(const int &end, File &fp, olist_t &olist, mlist_t &mlist, plist_t &plist)
     {
-        static char name[64];
+        static string name;
         static int objindex;
         Chunk chunk(fp);
 
@@ -226,7 +225,7 @@ namespace CDL
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_OBJECT:
-                    strcpy(name, readString(fp));
+                    name=readString(fp);
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_TRIMESH:
@@ -305,11 +304,11 @@ namespace CDL
                     break;
                 case CHUNK_OBJMAT:
                     {
-                        strcpy(name,readString(fp));
+                        string str=readString(fp);
                         std::vector<Material>::const_iterator mat_ptr=mlist.begin(), mat_end=mlist.end();
                         while (mat_ptr != mat_end)
                         {
-                            if (!strcmp(name, mat_ptr->getName()))
+                            if (str == mat_ptr->getName())
                             {
                                 olist.back().setMaterial(*mat_ptr);
                                 break;
@@ -333,8 +332,7 @@ namespace CDL
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_MATNAME:
-                    strcpy(name,readString(fp));
-                    mlist.push_back(Material(name));
+                    mlist.push_back(Material(readString(fp)));
                     break;
                 case CHUNK_MATAMBT:
                     mlist.back().setAmbient(readColor(fp));
@@ -379,13 +377,15 @@ namespace CDL
                     processChunks(chunk.getEnd(),fp,olist,mlist,plist);
                     break;
                 case CHUNK_KFHIERARCHY:
-                    strcpy(name,readString(fp));
-                    readShort(fp); // skip flags1
-                    readShort(fp); // skip flags2
-                    plist[std::string(name)]=readShort(fp);
-                    for (int i=0; i<olist.size(); i++)
-                        if (!strcmp(olist[i].getName(),name))
-                            objindex=i;
+                    {
+                        string str=readString(fp);
+                        readShort(fp); // skip flags1
+                        readShort(fp); // skip flags2
+                        plist[str]=readShort(fp);
+                        for (int i=0; i<olist.size(); i++)
+                            if (str == olist[i].getName())
+                                objindex=i;
+                    }
                     break;
                 case CHUNK_KFPIVOT:
                     olist[objindex].getAnimation().setPivot(readPoint(fp));
@@ -432,7 +432,7 @@ namespace CDL
         }
     }
 
-    MeshObject load3DS(const char *fname)
+    MeshObject load3DS(const string &fname)
     {
         File file(fname,File::READ);
         MeshObject obj=load3DS(file);

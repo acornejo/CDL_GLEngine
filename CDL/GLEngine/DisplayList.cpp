@@ -4,7 +4,7 @@
  *  @author   acornejo
  *  @date
  *   Created:       16:24:56 10/06/2005
- *   Last Update:   19:26:55 05/09/2006
+ *   Last Update:   20:31:08 30/05/2007
  */
 //========================================================================
 #include <CDL/GLEngine/DisplayList.h>
@@ -128,7 +128,7 @@ namespace CDL
         glCallList(m_listID+n);
     }
 
-    void DisplayList::call(const char *str) const
+    void DisplayList::call(const string &str) const
     {
         if (m_listID <= 0)
         {
@@ -136,7 +136,7 @@ namespace CDL
             return;
         }
         glListBase(m_listID);
-        glCallLists(strlen(str), GL_UNSIGNED_BYTE, str);
+        glCallLists(str.length(), GL_UNSIGNED_BYTE, str.c_str());
     }
 
     const size_t &DisplayList::getListID() const

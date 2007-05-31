@@ -4,11 +4,12 @@
  *  @author   acornejo
  *  @date
  *   Created:       01:56:26 22/03/2006
- *   Last Update:   19:15:49 05/09/2006
+ *   Last Update:   20:51:30 30/05/2007
  */
 //========================================================================
 #include <CDL/GLEngine/Program.h>
 #include <GL/glew.h>
+#include <string>
 
 namespace CDL
 {
@@ -72,9 +73,9 @@ namespace CDL
         std::string buf;
         while (!in.isEOF())
         {
-            char line[1024];
-            in.readLine(line);
-            buf=buf+line+'\n';
+            string line;
+            line=in.readString('\n');
+            buf=buf+line.c_str()+'\n';
         }
         const char *cbuf=buf.c_str();
         glShaderSourceARB(m_id,1,&cbuf,NULL);
@@ -94,15 +95,15 @@ namespace CDL
          return status == GL_TRUE;
     }
 
-    std::string Program::Shader::getLog() const
+    string Program::Shader::getLog() const
     {
-         std::string buf;
          GLint size, read;
 
          glGetObjectParameterivARB(m_id,GL_OBJECT_INFO_LOG_LENGTH_ARB, &size);
          GLcharARB *cbuf=new char[size];
          glGetInfoLogARB(m_id,size,&read,cbuf);
-         buf=cbuf;
+
+         string buf(cbuf);
          delete []cbuf;
 
          return buf;
@@ -183,17 +184,16 @@ namespace CDL
          return m_shader[i];
     }
 
-    std::string Program::getLog() const
+    string Program::getLog() const
     {
-         std::string buf;
          GLint size, read;
 
          glGetObjectParameterivARB(m_id,GL_OBJECT_INFO_LOG_LENGTH_ARB, &size);
          GLcharARB *cbuf=new char[size];
          glGetInfoLogARB(m_id,size,&read,cbuf);
-         buf=cbuf;
-         delete []cbuf;
 
+         string buf(cbuf);
+         delete []cbuf;
          return buf;
     }
 
@@ -220,33 +220,33 @@ namespace CDL
          glUseProgramObjectARB(0);
     }
 
-    void Program::setUniform(const char *name, const int &val)
+    void Program::setUniform(const string &name, const int &val)
     {
-         GLint var=glGetUniformLocationARB(m_id,name);
+         GLint var=glGetUniformLocationARB(m_id,name.c_str());
          glUniform1iARB(var,val);
     }
 
-    void Program::setUniform(const char *name, const float &val)
+    void Program::setUniform(const string &name, const float &val)
     {
-         GLint var=glGetUniformLocationARB(m_id,name);
+         GLint var=glGetUniformLocationARB(m_id,name.c_str());
          glUniform1fARB(var,val);
     }
 
-    void Program::setUniform(const char *name, const Vec2t &vec)
+    void Program::setUniform(const string &name, const Vec2t &vec)
     {
-         GLint var=glGetUniformLocationARB(m_id,name);
+         GLint var=glGetUniformLocationARB(m_id,name.c_str());
          glUniform2fvARB(var,1,(float *)&vec);
     }
 
-    void Program::setUniform(const char *name, const Vec3t &vec)
+    void Program::setUniform(const string &name, const Vec3t &vec)
     {
-         GLint var=glGetUniformLocationARB(m_id,name);
+         GLint var=glGetUniformLocationARB(m_id,name.c_str());
          glUniform3fvARB(var,1,(float *)&vec);
     }
 
-    void Program::setUniform(const char *name, const Vec4t &vec)
+    void Program::setUniform(const string &name, const Vec4t &vec)
     {
-         GLint var=glGetUniformLocationARB(m_id,name);
+         GLint var=glGetUniformLocationARB(m_id,name.c_str());
          glUniform4fvARB(var,1,(float *)&vec);
     }
 
